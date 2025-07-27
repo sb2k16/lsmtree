@@ -1,0 +1,77 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.18'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'application'
+}
+
+group = 'com.lsmtree'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    
+    // JSON Processing
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    
+    // Logging
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    
+    // Utilities
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'com.google.guava:guava:32.1.2-jre'
+    
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+}
+
+application {
+    mainClass = 'com.lsmtree.coordinator.SourceCoordinatorApplication'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Custom task for running with specific profiles
+task runDev(type: JavaExec) {
+    group = 'application'
+    description = 'Run the application with dev profile'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.lsmtree.coordinator.SourceCoordinatorApplication'
+    args '--spring.profiles.active=dev'
+}
+
+// JVM options for better performance
+tasks.withType(JavaExec) {
+    jvmArgs = [
+        '-Xms512m',
+        '-Xmx2g',
+        '-XX:+UseG1GC',
+        '-XX:G1HeapRegionSize=16m',
+        '-XX:+UseStringDeduplication'
+    ]
+}
+
+// Compilation options
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-parameters']
+} 

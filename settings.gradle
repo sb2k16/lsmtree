@@ -1,0 +1,11 @@
+rootProject.name = 'lsm-timeseries-storage'
+
+// Enable Gradle build cache for faster builds
+buildCache {
+    local {
+        enabled = true
+    }
+}
+
+// Enable configuration cache (Gradle 6.6+)
+// enableFeaturePreview('CONFIGURATION_CACHE') 
